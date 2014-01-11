@@ -26,69 +26,74 @@ int numberCompare (int i1, int i2) {
 template <class T>
 class QuickSort {
     public:
-    //Varibale
-    T * fullArray;       
-    int fullSizeOfArray;
-
-    int (*compare) (T,T); //T1 <= T2 return true, T1 > T2 return false
-            
-    //Functions
-            QuickSort(int,T *,int (*)(T,T)); // int (*compare) (T,T) function pointer should be in callback function for comparisons
-            ~QuickSort();
-    T       Sort(int,T *);
-    void    DisplayArray ();
-        
+        //Varibale
+        T * fullArray;       
+        int fullArraySize;
+    
+        int (*compare) (T,T); //T1 <= T2 return true, T1 > T2 return false
+                
+        //Functions
+                QuickSort(int,T *,int (*)(T,T)); // int (*compare) (T,T) function pointer should be in callback function for comparisons
+                ~QuickSort();    
+        T *     Sort();
+        void    DisplayArray (int,T *);
+    
+    private: 
+        T *     SortPriv (int, T *);
+  
 };
 
 template <class T>
-void QuickSort <T>::DisplayArray () {
+void QuickSort <T>::DisplayArray (int arraySize, T * array) {
     std::cout << std::endl << "Array: {";
-    for (int i = 0; i < fullSizeOfArray; i++) {
-        std::cout << fullArray [i] << ", ";
+    std::cout << array [0];
+    for (int i = 1; i < arraySize; i++) {
+        std::cout << ", " << array [i] ;
     }
     std::cout << "}" << std::endl;
 }
 
 template <class T>
-T QuickSort <T>::Sort (int sizeOfArray, T * sortArray){
+T * QuickSort <T>::Sort () {
+    return SortPriv(fullArraySize, fullArray);
+}
+
+template <class T>
+T * QuickSort <T>::SortPriv (int arraySize, T * sortArray){
     T * leftSelector = &sortArray [0];
     int leftCounter = 0;
-    T * rightSelector = &sortArray [sizeOfArray-1];
-    int rightCounter = sizeOfArray-1;
-    int seed = rand()%sizeOfArray;
+    T * rightSelector = &sortArray [arraySize-1];
+    int rightCounter = arraySize-1;
+    int seed = rand()%arraySize;
     T  pivot = sortArray[seed];//Random pivot
     T temp;
-    int compareInt;
     bool hasMoved;
     int movedCounter = 0;
-    std::cout << std::endl << "START SORT FUNCTION!" << std::endl << "Pivot " << pivot << std::endl << "Array Size: " << sizeOfArray << std::endl;
+    std::cout << std::endl << "START SORT FUNCTION!" << std::endl << "Pivot " << pivot << std::endl << "Array Size: " << arraySize << std::endl;
     
         while (leftSelector != rightSelector) {
             hasMoved = false;
-            DisplayArray();
+            DisplayArray(fullArraySize,fullArray);
             std::cout << "Left " << *leftSelector << " ";
-            compareInt = compare (pivot,*leftSelector);
-            while (compareInt == 1) { //Keep getting next element while pivot is greater than left selector
+            while (1 == (compare (pivot,*leftSelector))) { //Keep getting next element while pivot is greater than left selector
+                if (leftSelector == rightSelector){
+                    break;
+                }
                 leftCounter++;
                 leftSelector = &sortArray [leftCounter];
                 std::cout << "Picking LEFT: " << *leftSelector << " ";
                 hasMoved = true;
+            }
+            std::cout << std::endl << "Right " << *rightSelector << " ";
+
+            while (-1 == (compare (pivot,*rightSelector))) { //Keep getting next element while pivot is less then or equal to right selector
                 if (leftSelector == rightSelector){
                     break;
                 }
-                compareInt = compare (pivot,*leftSelector);
-            }
-            std::cout << std::endl << "Right " << *rightSelector << " ";
-            compareInt = compare (pivot, *rightSelector);
-            while (compareInt == -1) { //Keep getting next element while pivot is less then or equal to right selector
                 rightCounter--;
                 rightSelector = &sortArray [rightCounter];
                 std::cout << "Picking RIGHT: " << *rightSelector << " ";
                 hasMoved = true;
-                if (leftSelector == rightSelector){
-                    break;
-                }
-                compareInt = compare (pivot,*rightSelector);
             }
             temp = *leftSelector;
             *leftSelector = *rightSelector;
@@ -106,18 +111,18 @@ T QuickSort <T>::Sort (int sizeOfArray, T * sortArray){
                     *leftSelector = temp;
                 }
                 
-                if (rightSelector == &sortArray [sizeOfArray - 1 - movedCounter]) { //If rightselector is farthest right move to next element
+                if (rightSelector == &sortArray [arraySize - 1 - movedCounter]) { //If rightselector is farthest right move to next element
                     rightSelector--;   
                 } else {
                     //Switch rightSelector with far right position
-                    temp = sortArray [sizeOfArray - 1 - movedCounter];
-                    sortArray [sizeOfArray-1-movedCounter] = *rightSelector;
+                    temp = sortArray [arraySize - 1 - movedCounter];
+                    sortArray [arraySize-1-movedCounter] = *rightSelector;
                     *rightSelector = temp;
                 }
                 
                 movedCounter++;
             }
-            DisplayArray();
+            DisplayArray(fullArraySize,fullArray);
             //system("PAUSE");
         }
         //Put pivots back in middle
@@ -131,8 +136,8 @@ T QuickSort <T>::Sort (int sizeOfArray, T * sortArray){
                 
                 tempPointer = leftSelector + i + 1;
                 temp = *tempPointer;
-                *tempPointer = sortArray [sizeOfArray - 1 - i];
-                sortArray [sizeOfArray - 1 - i] = temp;  
+                *tempPointer = sortArray [arraySize - 1 - i];
+                sortArray [arraySize - 1 - i] = temp;  
             } else {
                 if (endPoint == pivot) {
                     T * tempPointer = leftSelector - i - 1;
@@ -142,8 +147,8 @@ T QuickSort <T>::Sort (int sizeOfArray, T * sortArray){
                 
                     tempPointer = leftSelector + i + 1;
                     temp = *tempPointer;
-                    *tempPointer = sortArray [sizeOfArray - 1 - i];
-                    sortArray [sizeOfArray - 1 - i] = temp;  
+                    *tempPointer = sortArray [arraySize - 1 - i];
+                    sortArray [arraySize - 1 - i] = temp;  
                 } else { // *leftSelector > pivot
                     T * tempPointer = leftSelector - i - 1;
                     temp = *tempPointer;
@@ -152,15 +157,15 @@ T QuickSort <T>::Sort (int sizeOfArray, T * sortArray){
                     
                     tempPointer = leftSelector + i;
                     temp = *tempPointer;
-                    *tempPointer = sortArray [sizeOfArray - 1 - i];
-                    sortArray [sizeOfArray - 1 - i] = temp;
+                    *tempPointer = sortArray [arraySize - 1 - i];
+                    sortArray [arraySize - 1 - i] = temp;
                 }
                 
             }
         }
-        DisplayArray();
+        DisplayArray(fullArraySize,fullArray);
         //system("PAUSE");
-        if (sizeOfArray > 2) {
+        if (arraySize > 2) {
             T * sizePointer = &sortArray [0];
             int countSize = 0;
             while (compare(pivot,*sizePointer) != 0) {
@@ -168,9 +173,9 @@ T QuickSort <T>::Sort (int sizeOfArray, T * sortArray){
                 countSize++;
             }
             if (countSize >0) {
-                Sort(countSize,sortArray);
+                SortPriv(countSize,sortArray);
             }
-            sizePointer = &sortArray [sizeOfArray - 1];
+            sizePointer = &sortArray [arraySize - 1];
             countSize = 0;
             while(compare(pivot,*sizePointer) != 0) {
                 sizePointer--;
@@ -178,15 +183,16 @@ T QuickSort <T>::Sort (int sizeOfArray, T * sortArray){
             }
             sizePointer++;
             if (countSize >0) {
-                Sort (countSize,sizePointer);
+                SortPriv(countSize,sizePointer);
             }
         }
+    return sortArray;
 }
 
 
 template <class T>      
-    QuickSort <T>::QuickSort(int arraySize, T * arrayPointer, int (*typeCompare) (T,T)) {
-    fullSizeOfArray = arraySize;
+QuickSort <T>::QuickSort(int arraySize, T * arrayPointer, int (*typeCompare) (T,T)) {
+    fullArraySize = arraySize;
     fullArray = arrayPointer;
     compare = typeCompare;
 }
