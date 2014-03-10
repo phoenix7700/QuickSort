@@ -3,7 +3,7 @@
 /*
   Name: QuickSort
   Author: Matthew AhSam
-  Date: 17/12/13 04:04
+  Date: 12/17/2013 04:04
   Description: QuickSort.h
   Requirements: Comparison function - int (*compare) (T,T) - T1 < T2 return -1 T1 == T2 return 0 T1 > T2 return 1;
                 Overloaded = operator - Makes use of = operator as a copy
@@ -86,7 +86,7 @@ T * QuickSort <T>::SortPriv (int arraySize, T * sortArray){
             }
             std::cout << std::endl << "Right " << *rightSelector << " ";
 
-            while (-1 == (compare (pivot,*rightSelector))) { //Keep getting next element while pivot is less then or equal to right selector
+            while (-1 == (compare (pivot,*rightSelector))) { //Keep getting next element while pivot is less than right selector
                 if (leftSelector == rightSelector){
                     break;
                 }
